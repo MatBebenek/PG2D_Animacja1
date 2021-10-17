@@ -26,10 +26,10 @@
     document.addEventListener('keydown', function (e) {
         switch (e.keyCode) {
             case 37:
-                alert('left');
+                moveLeft();
                 break;
             case 39:
-                moveRectRight();
+                moveRight();
                 break;
         }
     });
@@ -37,22 +37,19 @@
     function moveRight() {
         ctx.clearRect(0, 0, 800, 600);
         ctx.beginPath();
-        ctx.rect(rectX++, rectY, rectWidth, rectHeight);
-        ctx.fill();
+        rectX+=10;
+        ctx.rect(rectX, rectY, rectWidth, rectHeight);
+        ctx.stroke();
         ctx.closePath();
     }
 
-    function rectMove(event) {
-        if (event.key === "ArrowLeft") {
-            event.preventDefault()
-            moveLeft()
-        } else if (event.key === "ArrowRight") {
-            event.preventDefault()
-            moveRight()
-        } else if (event.key === " ") {
-            event.preventDefault()
-            fireLaser()
-        }
+    function moveLeft() {
+        ctx.clearRect(0, 0, 800, 600);
+        ctx.beginPath();
+        rectX-=10;
+        ctx.rect(rectX, rectY, rectWidth, rectHeight);
+        ctx.stroke();
+        ctx.closePath();
     }
 
 </script>
