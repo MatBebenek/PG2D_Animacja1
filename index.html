@@ -35,7 +35,7 @@
     });
 
     function moveRight() {
-        if(rectX < (c.offsetLeft + c.width) - rectWidth)
+        if(rectX < c.getBoundingClientRect().right - rectWidth - 20)
         {
         ctx.clearRect(0, 0, 800, 600);
         ctx.beginPath();
@@ -49,7 +49,7 @@
     }
 
     function moveLeft() {
-        if(rectX >  c.offsetLeft)
+        if(rectX >  c.getBoundingClientRect().left)
         {
             ctx.clearRect(0, 0, 800, 600);
         ctx.beginPath();
