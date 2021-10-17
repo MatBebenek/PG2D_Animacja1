@@ -35,32 +35,29 @@
     });
 
     function moveRight() {
-        if(rectX < c.getBoundingClientRect().right - rectWidth - 20)
-        {
-        ctx.clearRect(0, 0, 800, 600);
-        ctx.beginPath();
-        rectX+=10;
-        ctx.rect(rectX, rectY, rectWidth, rectHeight);
-        ctx.stroke();
-        ctx.closePath();
+        if (rectX < c.getBoundingClientRect().right - rectWidth - 20) {
+            ctx.clearRect(0, 0, 800, 600);
+            ctx.beginPath();
+            rectX += 10;
+            ctx.rect(rectX, rectY, rectWidth, rectHeight);
+            ctx.stroke();
+            ctx.closePath();
         } else {
             return;
         }
     }
 
     function moveLeft() {
-        if(rectX >  c.getBoundingClientRect().left)
-        {
+        if (rectX > c.getBoundingClientRect().left) {
             ctx.clearRect(0, 0, 800, 600);
-        ctx.beginPath();
-        rectX-=10;
-        ctx.rect(rectX, rectY, rectWidth, rectHeight);
-        ctx.stroke();
-        ctx.closePath();
+            ctx.beginPath();
+            rectX -= 10;
+            ctx.rect(rectX, rectY, rectWidth, rectHeight);
+            ctx.stroke();
+            ctx.closePath();
         } else {
-         return;
+            return;
         }
-        
     }
 
 </script>
