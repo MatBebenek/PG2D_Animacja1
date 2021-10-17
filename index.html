@@ -1,24 +1,59 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Animacja 1 by Mateusz Bębenek</title>
 </head>
 
 <body>
-    <canvas id="myCanvas" width="800" heigth="600">
+    <canvas id="myCanvas" width="800" height="600" style="border:2px solid #d3d3d3;">
     </canvas>
 </body>
 
 <script>
-   var c = document.getElementById("myCanvas");
-   var ctx = c.getContext("2d");
+    var c = document.getElementById("myCanvas");
+    var ctx = c.getContext("2d");
 
-   ctx.beginPath();
-   ctx.rect(50, 50, 30, 60);
-   ctx.stroke();
+    const rectWidth = c.offsetWidth / 8.0;
+    const rectHeight = c.offsetWidth / 40.0;
+    const rectY = c.offsetHeight - rectHeight - 10;
+    var rectX = c.offsetWidth / 2.0 - rectWidth / 2.0;
+
+    rect = ctx.rect(rectX, rectY, rectWidth, rectHeight);
+    ctx.stroke();
+
+    document.addEventListener('keydown', function (e) {
+        switch (e.keyCode) {
+            case 37:
+                alert('left');
+                break;
+            case 39:
+                moveRectRight();
+                break;
+        }
+    });
+
+    function moveRight() {
+        ctx.clearRect(0, 0, 800, 600);
+        ctx.beginPath();
+        ctx.rect(rectX++, rectY, rectWidth, rectHeight);
+        ctx.fill();
+        ctx.closePath();
+    }
+
+    function rectMove(event) {
+        if (event.key === "ArrowLeft") {
+            event.preventDefault()
+            moveLeft()
+        } else if (event.key === "ArrowRight") {
+            event.preventDefault()
+            moveRight()
+        } else if (event.key === " ") {
+            event.preventDefault()
+            fireLaser()
+        }
+    }
 
 </script>
 
