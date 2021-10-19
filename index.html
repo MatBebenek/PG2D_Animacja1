@@ -16,19 +16,26 @@
     var ctx = c.getContext("2d");
 
     const rectWidth = c.offsetWidth / 8.0;
-    const rectHeight = c.offsetWidth / 40.0;
+    const rectHeight = c.offsetHeight / 40.0;
     const rectY = c.offsetHeight - rectHeight - 10;
     var rectX = c.offsetWidth / 2.0 - rectWidth / 2.0;
+    const speed = 3,
+    bulletSpeed = 25,
+    timeBeforeReborn = 20000;
+    var bullet = null,
+        score = 0,
+        invisibleTargets = 0;
+    const targets = [];
 
-    var p = { x: 25, y: rectY };
-    var velo = 3,
-    corner = 50,
-    rad = 5;
-    var ball = { x: p.x, y: p.y };
-    var moveY = Math.sin(Math.PI / 180 * corner) * velo;
+    var leftBorder = c.getBoundingClientRect().left;
+    var rightBorder = c.getBoundingClientRect().right - rectWidth - 20;
 
     rect = ctx.rect(rectX, rectY, rectWidth, rectHeight);
     ctx.stroke();
+
+
+
+
 
     document.addEventListener('keydown', function (e) {
         switch (e.keyCode) {
@@ -39,49 +46,149 @@
                 moveRight();
                 break;
             case 32:
-                shooting();
+                shoot();
                 break;
         }
     });
 
-    function shooting() {
-        ctx.clearRect(0, 0, 800, 600);
+    function shoot() {
+        if (!bullet) {
+            bullet = {
+                x: rectX + rectWidth / 2,
+                y: rectY,
+                radius: 10
+            };
+        }
+    }
 
-        ball.x = rectX;
-        ball.y -= moveY;
-
-        ctx.beginPath();
-        ctx.arc(ball.x, ball.y, rad, 0, Math.PI * 2, false);
-        ctx.stroke();
-        ctx.closePath();
+    function drawBullet() {
+        if (bullet) {
+            ctx.beginPath();
+            ctx.fillStyle = 'orange';
+            ctx.arc(bullet.x, bullet.y, bullet.radius, 0, Math.PI * 2, false);
+            ctx.fill();
+        }
     }
 
     function moveRight() {
-        if (rectX < c.getBoundingClientRect().right - rectWidth - 20) {
-            ctx.clearRect(0, 0, 800, 600);
-            ctx.beginPath();
+        if (rectX < rightBorder) {
             rectX += 10;
-            ctx.rect(rectX, rectY, rectWidth, rectHeight);
-            ctx.stroke();
-            ctx.closePath();
         } else {
             return;
         }
     }
 
     function moveLeft() {
-        if (rectX > c.getBoundingClientRect().left) {
-            ctx.clearRect(0, 0, 800, 600);
-            ctx.beginPath();
+        if (rectX > leftBorder) {
             rectX -= 10;
-            ctx.rect(rectX, rectY, rectWidth, rectHeight);
-            ctx.stroke();
-            ctx.closePath();
         } else {
             return;
         }
     }
 
+    function moveBullet() {
+        if (bullet) {
+            if (bullet.y > 0) {
+                bullet.y -= bulletSpeed;
+            } else {
+                bullet = null;
+            }
+        }
+    }
+
+    function drawRectangle() {
+        ctx.beginPath();
+        ctx.rect(rectX, rectY, rectWidth, rectHeight);
+        ctx.stroke();
+        ctx.closePath();
+    }
+
+    function clearCanvas() {
+        ctx.clearRect(0, 0, 800, 600);
+    }
+
+    function draw() {
+        clearCanvas();
+        drawRectangle();
+        drawBullet();
+        drawTargets();
+        drawScore();
+    }
+
+    function drawTargets() {
+        ctx.beginPath();
+        targets.forEach((target) => {
+            if (target.visible) {
+                ctx.fillStyle = 'red';
+                ctx.moveTo(target.x, target.y);
+                ctx.arc(target.x, target.y, target.radius, 0, 2 * Math.PI);
+            }
+        });
+        ctx.fill();
+        ctx.closePath();
+    }
+    function generateTargetLocations() {
+        function extraItems(val) {
+            return val % 2 === 0 ? 1 : 0;
+        }
+        for (var j = 1; j < 3; j++) {
+            for (var i = 1; i < 15 + extraItems(j); i++) {
+                targets.push({
+                    x: i * 50 + j % 2 * 20,
+                    y: j * 50,
+                    radius: 20,
+                    visible: true
+                });
+            }
+        }
+    }
+
+    function checkCollision() {
+        if (bullet) {
+            var aim = targets.find((target) => {
+                if (target.visible) {
+                    return parseInt(Math.sqrt(((target.x - bullet.x) *
+                        (target.x - bullet.x)) +
+                        ((target.y - bullet.y) *
+                            (target.y - bullet.y)))) < target.radius + bullet.radius;
+                }
+            });
+        }
+        if (aim) {
+            targets[targets.indexOf(aim)].visible = false;
+            setTimeout(() => {
+                targets[targets.indexOf(aim)].visible = true;
+                invisibleTargets--;
+            }, timeBeforeReborn);
+            bullet = null;
+            score++;
+            invisibleTargets++;
+        }
+    }
+    function checkTargets() {
+        if (targets.length === invisibleTargets) {
+            targets.forEach(target => target.visible = true);
+            invisibleTargets = 0;
+        }
+    }
+
+    function drawScore() {
+        ctx.font = "24px Arial";
+        ctx.fillStyle = "orange";
+        ctx.fillText("Punkty: " + score, c.width - 750, c.height - 25);
+    }
+
+    function moveAll() {
+        checkCollision();
+        checkTargets();
+        moveBullet();
+        draw();
+    }
+
+    generateTargetLocations();
+    drawTargets();
+    setInterval(moveAll, 10);
+    setInterval(draw, 5);
 
 </script>
 
